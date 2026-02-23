@@ -41,4 +41,20 @@ def get_gbp_rate():
   except:
     return "The exchange rate API is currently down. You may have a bug. Please try your request again later."
 
+# This route contains the core functionality to get todays exchange rate for USD to ZAR and return it as a number
+# Local test: http://127.0.0.1:5000/USDRate
+
+@app.route('/USDRate', methods=['GET'])
+def get_usd_rate():
+  try:
+    assert_auth_header()
+    response = requests.get(EXCHANGE_RATE_URL + API_KEY + "/latest/USD")
+    api_data = response.json()
+    exchange_rate_for_USD_to_rand = api_data["conversion_rates"]["ZAR"]
+    return str(exchange_rate_for_USD_to_rand)
+  except AssertionError:
+     return ERROR_STRING
+  except:
+    return "The exchange rate API is currently down. You may have a bug. Please try your request again later."
+
 

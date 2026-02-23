@@ -8,10 +8,11 @@ https://v6.exchangerate-api.com/v6/ for exchange rates
 
 ## How to run in Flask
 In terminal
+```console
 cd C:\Lisa Files and Data\3-Work\2025\Code\GPTs\<projectname>
 
 python -m venv venv
-.\venv\Scripts\activate
+.venv\Scripts\Activate.ps1 
 
 pip install flask requests
 
@@ -20,6 +21,7 @@ $env:FLASK_ENV = "development"
 
 flask --app plugin run
 
+```
  API will be available at http://127.0.0.1:5000/ using browser or Postman
 
 

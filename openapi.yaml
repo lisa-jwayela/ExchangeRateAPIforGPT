@@ -1,0 +1,38 @@
+openapi: 3.1.0
+info:
+  title: Exchange Rate API
+  description: API to get exchange rates for GBP to ZAR
+  version: 1.0.0
+
+servers:
+  - url: https://lisajwa.pythonanywhere.com
+    description:  Lisa development server
+
+paths:
+  /:
+    get:
+      summary: Health check endpoint
+      description: Returns a simple message to verify the plugin is working
+      operationId: index
+      responses:
+        '200':
+          description: Plugin is operational
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Your exchange rate api plugin is working"
+
+  /GBPRate:
+    get:
+      summary: Get GBP to ZAR exchange rate
+      description: Returns the current exchange rate from GBP to ZAR
+      operationId: get_gbp_rate
+      responses:
+        '200':
+          description: Successful response with exchange rate or error message
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "23.45"

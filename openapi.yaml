@@ -28,6 +28,9 @@ paths:
       summary: Get GBP to ZAR exchange rate
       description: Returns the current exchange rate from GBP to ZAR
       operationId: get_gbp_rate
+      security:
+        - bearerAuth: []
+
       responses:
         '200':
           description: Successful response with exchange rate or error message
@@ -36,3 +39,17 @@ paths:
               schema:
                 type: string
                 example: "23.45"
+        '401':
+          description: Missing or invalid authorization header
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "The authorization header is missing a Bearer token key or doesn't match the required key."
+
+
+components:
+  schemas: {}
+  securitySchemes:
+    bearerAuth:
+      type: http

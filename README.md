@@ -26,6 +26,7 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1 
 
 python.exe -m pip install --upgrade pip 
+
 ```
 
 ### Setup Flask to run the API for testing locally
@@ -39,13 +40,18 @@ $env:FLASK_ENV = "development"
 flask --app plugin run
 
 ```
- API will be available at http://127.0.0.1:5000/ using browser or Postman
-
+ API will be available at http://127.0.0.1:5000/ 
+ For testing with browser to test default endpoint
 
 ## Setup Python anywhere for testing API in cloud
-https://lisajwa.pythonanywhere.com should give default message that API running
+Go to  https://www.pythonanywhere.com
+Create free account
+Upload these 2 files for the "mysite" folder: plugin.py and openapi.yaml 
 
-Must put 2 files: plugin.py and openapi.yaml as files on https://www.pythonanywhere.com
+Then use Postman for https://lisajwa.pythonanywhere.com and see default message that API running
+Then use Postman for testing https://lisajwa.pythonanywhere.com/GBPRate or 
+https://lisajwa.pythonanywhere.com/USDRate with Bearer token authorization to see rates
+
 
 
 ## Setup GPTBuilder for ChatGPT

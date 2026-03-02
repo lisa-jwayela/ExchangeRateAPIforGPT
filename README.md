@@ -1,17 +1,22 @@
-# Creating GPT with Actions that calls API
-Simple API to use with a Custom GPT to demonstrate how it can perform actions to get Pound exchange rate for the day
+# API to use for GPT with Custom Actions that calls this API
+Simple API to use with a OpenAI GPT Actions to demonstrate getting Pound and $ exchange rate for the day
 
 ## API using
 https://v6.exchangerate-api.com/v6/ for exchange rates
 
 
-## Setup Virtual Env and test API in Jupyter Notebook
+## Getting Started
+Prerequisites
+
+- Python 3.14 (recommended)
+- https://pypi.org/project/Flask/
+- Jupyter Notebook for testing 3rd party APIs
+- Account for https://chatgpt.com/gpts 
+  
+### Setup Virtual Env and test API in Jupyter Notebook
 
 NOTE: Make a virtual environment for python v3.14 t
-
-And then use VS Notebook: Select Notebook Kernel to select the virtual environment to test with Jupyter Notebook
-
-## How to run in Flask
+And then use VS "Notebook: Select Notebook Kernel" to select the virtual environment to test with Jupyter Notebook
 
 In terminal
 ```console
@@ -21,7 +26,11 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1 
 
 python.exe -m pip install --upgrade pip 
+```
 
+### Setup Flask to run the API for testing locally
+
+```console
 pip install flask requests
 
 $env:FLASK_APP = "plugin.py"
@@ -33,11 +42,14 @@ flask --app plugin run
  API will be available at http://127.0.0.1:5000/ using browser or Postman
 
 
-### Python anywhere for testing web service api
+## Setup Python anywhere for testing API in cloud
 https://lisajwa.pythonanywhere.com should give default message that API running
 
-Must put plugin.py and openapi.yaml as files on https://www.pythonanywhere.com
+Must put 2 files: plugin.py and openapi.yaml as files on https://www.pythonanywhere.com
 
+
+## Setup GPTBuilder for ChatGPT
+https://help.openai.com/en/articles/8770868-gpt-builder
 
 ### Ideas for Instructions for Custom GPT
 You are giving feedback to user about the British pound (GBP) and/or the dollar (USD) exchange rates to South African rands (ZAR) for today using the Actions API.  

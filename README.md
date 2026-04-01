@@ -174,7 +174,7 @@ Default response structure:
 2) Trend context (1 month, 1 year)
 3) 1-week outlook
 4) Key risks/watchouts
-5) Source note (API timestamp + web
+5) Source note (API timestamp + web sources used)
 
 ## Ideas for improvements to POC
 

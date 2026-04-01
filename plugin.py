@@ -18,8 +18,9 @@ MISSING_KEY_STRING = "Missing EXCHANGE_RATE_API_KEY or SERVICE_AUTH_KEY environm
 def assert_auth_header():
   if not SERVICE_AUTH_KEY:
     raise ValueError(MISSING_KEY_STRING)
-  assert request.headers.get(
-      "Authorization", None) == f"Bearer {SERVICE_AUTH_KEY}"
+  auth_header = request.headers.get("Authorization", None)
+  if auth_header != f"Bearer {SERVICE_AUTH_KEY}":
+    raise AssertionError(ERROR_STRING)
 
 
 # Default route populated to show things are working when we deploy and test

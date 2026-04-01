@@ -1,4 +1,5 @@
 #Import the needed libraries
+import json
 import os
 import requests
 from flask import Flask, request
@@ -37,7 +38,7 @@ def get_gbp_rate():
     if not API_KEY:
       return MISSING_KEY_STRING, 500
     assert_auth_header()
-    response = requests.get(EXCHANGE_RATE_URL + API_KEY + "/latest/GBP")
+    response = requests.get(EXCHANGE_RATE_URL + API_KEY + "/latest/GBP", timeout=10)
     api_data = response.json()
     exchange_rate_for_GBP_to_rand = api_data["conversion_rates"]["ZAR"]
     return str(exchange_rate_for_GBP_to_rand)
@@ -45,8 +46,12 @@ def get_gbp_rate():
      return ERROR_STRING, 401
   except ValueError as e:
     return str(e), 500
-  except:
-    return "The exchange rate API is currently down. You may have a bug. Please try your request again later."
+  except requests.Timeout:
+    return "The exchange rate API request timed out. Please try again later.", 504
+  except requests.RequestException as e:
+    return f"Failed to reach the exchange rate API: {e}", 502
+  except (KeyError, json.JSONDecodeError) as e:
+    return f"Unexpected response from the exchange rate API: {e}", 502
 
 # This route contains the core functionality to get todays exchange rate for USD to ZAR and return it as a number
 # Local test: http://127.0.0.1:5000/USDRate
@@ -57,7 +62,7 @@ def get_usd_rate():
     if not API_KEY:
       return MISSING_KEY_STRING, 500
     assert_auth_header()
-    response = requests.get(EXCHANGE_RATE_URL + API_KEY + "/latest/USD")
+    response = requests.get(EXCHANGE_RATE_URL + API_KEY + "/latest/USD", timeout=10)
     api_data = response.json()
     exchange_rate_for_USD_to_rand = api_data["conversion_rates"]["ZAR"]
     return str(exchange_rate_for_USD_to_rand)
@@ -65,7 +70,11 @@ def get_usd_rate():
      return ERROR_STRING, 401
   except ValueError as e:
     return str(e), 500
-  except:
-    return "The exchange rate API is currently down. You may have a bug. Please try your request again later."
+  except requests.Timeout:
+    return "The exchange rate API request timed out. Please try again later.", 504
+  except requests.RequestException as e:
+    return f"Failed to reach the exchange rate API: {e}", 502
+  except (KeyError, json.JSONDecodeError) as e:
+    return f"Unexpected response from the exchange rate API: {e}", 502
 
 

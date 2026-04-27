@@ -1,11 +1,11 @@
 # Exchange Rate API for GPT Actions
 
-This POC project is a lightweight REST API that exposes two focused currency endpoints for GPT Actions:
+This POC project is a lightweight REST API that exposes two focused currency endpoints for use in a GPT Action:
 
 - GBP to ZAR
 - USD to ZAR
 
-It is to demonstrate how a custom GPT Action can call an API for accurate exchange rates for a South African
+It is used to demonstrate a custom GPT Action calling an API for OpenAI GPT Actions and for Dimagi Open Chat Studio Custom Actions (https://github.com/dimagi/open-chat-studio)
 
 ## What This Project Demonstrates
 
@@ -24,7 +24,7 @@ It is to demonstrate how a custom GPT Action can call an API for accurate exchan
 
 ### Why plain-text responses?
 
-For this POC, returning a plain text value keeps the API simple for GPT Actions and quick manual tests. 
+For this POC, returning a plain text value keeps the API simple for GPT Actions and quick manual tests.
 
 ## API Surface
 
@@ -79,10 +79,13 @@ This makes the API easier to integrate with GPT Actions and tooling such as Post
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
+
+pip install pre-commit
+pre-commit install
 pip install flask requests
 
-$env:EXCHANGE_RATE_API_KEY = "your_exchange_rate_api_key"
-$env:SERVICE_AUTH_KEY = "your_service_auth_key"
+$env:EXCHANGE_RATE_API_KEY = "your_exchange_rate_api_key" # pragma: allowlist secret
+$env:SERVICE_AUTH_KEY = "your_service_auth_key" # pragma: allowlist secret
 
 $env:FLASK_APP = "plugin.py"
 $env:FLASK_ENV = "development"
@@ -122,9 +125,9 @@ If you use `setx`, restart VS Code before running notebook cells.
 
 ### 3) API client test
 
-Login to your PythonAnywhere account and upload these 2 files for the "mysite" folder: 
-- plugin.py and 
-- openapi.yaml 
+Login to your PythonAnywhere account and upload these 2 files for the "mysite" folder:
+- plugin.py and
+- openapi.yaml
 
 Use Postman to call:
 

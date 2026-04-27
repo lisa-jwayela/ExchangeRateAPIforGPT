@@ -130,7 +130,7 @@ If you use `setx`, restart VS Code before running notebook cells.
 
 ### 3) API client test
 
-Login to your PythonAnywhere account and upload these 2 files for the "mysite" folder:
+Login to your PythonAnywhere account and upload these files for the "mysite" folder:
 - plugin.py and
 - openapi.yaml
 - .env

@@ -14,7 +14,7 @@ It is used to demonstrate a custom GPT Action calling an API for OpenAI GPT Acti
 - Security: protected endpoints with HTTP Bearer token.
 - Easy deployment: hosted verification path on PythonAnywhere.
 - Testing layers: separate notebook flows for provider-level checks and wrapper API checks.
-- Pre-commit hooks: Ruff, Bandit, Yelp, yaml validation, debug statement checks
+- Pre-commit hooks: Ruff, Yelp, yaml validation, debug statement checks
 - .env file for keys
 
 ## Architecture Overview
@@ -130,7 +130,7 @@ If you use `setx`, restart VS Code before running notebook cells.
 
 ### 3) API client test
 
-Login to your PythonAnywhere account and upload these 2 files for the "mysite" folder:
+Login to your PythonAnywhere account and upload these files for the "mysite" folder:
 - plugin.py and
 - openapi.yaml
 - .env

@@ -135,6 +135,12 @@ Login to your PythonAnywhere account and upload these files for the "mysite" fol
 - openapi.yaml
 - .env
 
+In a PythonAnywhere Bash console, install the required packages:
+
+```console
+pip install flask requests python-dotenv
+```
+
 Use Postman to call:
 
 - `https://<your-pythonanywhere-domain>/`

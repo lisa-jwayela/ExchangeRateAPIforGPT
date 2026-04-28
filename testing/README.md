@@ -18,7 +18,7 @@ setx EXCHANGE_RATE_API_KEY "your_exchange_rate_api_key"
 
 If you use `setx`, restart VS Code before running notebook cells.
 
-## 2) Local web app API test with Postman
+## 2) Flask local web app API test with Postman
 
 ```console
 
@@ -51,9 +51,9 @@ Include `Authorization: Bearer <SERVICE_AUTH_KEY>` for protected endpoints.
 2. Follow these instructions for Flask on Python: https://help.pythonanywhere.com/pages/Flask
 
 3. Then upload these files for the "mysite" folder:
-- plugin.py and
-- openapi.yaml
-- .env
+    - plugin.py and
+    - openapi.yaml
+    - .env
 
 In a PythonAnywhere Bash console, install the required packages:
 
@@ -61,10 +61,7 @@ In a PythonAnywhere Bash console, install the required packages:
 pip install flask requests python-dotenv
 ```
 
-### 3.1 Test with Juypter Notebook
-`test-exchange-rate-plugin.ipnb`
-
-### 3.2 Test with Postman
+### 3.1 Test with Postman
 
 Use Postman to call:
 
@@ -72,7 +69,14 @@ Use Postman to call:
 - `https://<your-pythonanywhere-domain>/GBPRate`
 - `https://<your-pythonanywhere-domain>/USDRate`
 
-Include `Authorization: Bearer <SERVICE_AUTH_KEY>` for protected endpoints.
+Include `Authorization: Bearer <SERVICE_AUTH_KEY>` for these protected endpoints.
+
+### 3.1 Test with Juypter Notebook
+`test-exchange-rate-plugin.ipnb`
+
+NOTE: the SERVICE_AUTH_KEY is needed
+
+--------------------------------------------------------------------------------------------
 
 ## GPT Action Setup
 

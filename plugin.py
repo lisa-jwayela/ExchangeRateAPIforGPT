@@ -16,15 +16,14 @@ EXCHANGE_RATE_URL = "https://v6.exchangerate-api.com/v6/"
 API_KEY = os.getenv("EXCHANGE_RATE_API_KEY")
 SERVICE_AUTH_KEY = os.getenv("SERVICE_AUTH_KEY")
 ERROR_STRING = "The authorization header is missing a Bearer token key or doesn't match the required key."
-MISSING_KEY_STRING = (
-    "Missing EXCHANGE_RATE_API_KEY or SERVICE_AUTH_KEY environment variable."
-)
+MISSING_KEY_STRING = "Missing EXCHANGE_RATE_API_KEY environment variable."
+MISSING_SERVICE_KEY_STRING = "Missing SERVICE_AUTH_KEY environment variable."
 
 
 # Requires token be present
 def assert_auth_header():
     if not SERVICE_AUTH_KEY:
-        raise ValueError(MISSING_KEY_STRING)
+        raise ValueError(MISSING_SERVICE_KEY_STRING)
     auth_header = request.headers.get("Authorization", None)
     if auth_header != f"Bearer {SERVICE_AUTH_KEY}":
         raise AssertionError(ERROR_STRING)

@@ -138,11 +138,11 @@ If you use `setx`, restart VS Code before running notebook cells.
 - openapi.yaml
 - .env
 
-In a Bash console on ~/mysite
+In a PythonAnywhere Bash console, install the required packages:
+
 ```console
 pip install flask requests python-dotenv
 ```
-
 
 Use Postman to call:
 

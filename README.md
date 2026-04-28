@@ -128,12 +128,21 @@ setx SERVICE_AUTH_KEY "your_service_auth_key"
 
 If you use `setx`, restart VS Code before running notebook cells.
 
-### 3) API client test
+### 3) API client test with PythonAnywhere
 
-Login to your PythonAnywhere account and upload these files for the "mysite" folder:
+1. Login to your PythonAnywhere account
+2. Follow these instructions for Flask on Python: https://help.pythonanywhere.com/pages/Flask
+
+3. Then upload these files for the "mysite" folder:
 - plugin.py and
 - openapi.yaml
 - .env
+
+In a Bash console on ~/mysite
+```console
+pip install flask requests python-dotenv
+```
+
 
 Use Postman to call:
 

@@ -21,19 +21,19 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: "Your exchange rate api plugin is working"
+                example: "Health Check: Your exchange rate API plugin is working"
 
   /GBPRate:
     get:
       summary: Get GBP to ZAR exchange rate
-      description: Returns the current exchange rate from GBP to ZAR
+      description: Returns the current exchange rate from GBP to ZAR as plain text
       operationId: get_gbp_rate
       security:
         - bearerAuth: []
 
       responses:
         '200':
-          description: Successful response with exchange rate or error message
+          description: Successful response with the GBP to ZAR exchange rate
           content:
             text/plain:
               schema:
@@ -46,18 +46,43 @@ paths:
               schema:
                 type: string
                 example: "The authorization header is missing a Bearer token key or doesn't match the required key."
+        '500':
+          description: Required environment variables are missing
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Missing EXCHANGE_RATE_API_KEY or SERVICE_AUTH_KEY environment variable."
+        '502':
+          description: Upstream exchange rate provider failed or returned an unexpected payload
+          content:
+            text/plain:
+              schema:
+                type: string
+                examples:
+                  upstreamRequestFailed:
+                    value: "Failed to reach the exchange rate API: 503 Server Error"
+                  unexpectedPayload:
+                    value: "Unexpected response from the exchange rate API: 'conversion_rates'"
+        '504':
+          description: Upstream exchange rate provider timed out
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "The exchange rate API request timed out. Please try again later."
 
   /USDRate:
     get:
       summary: Get USD to ZAR exchange rate
-      description: Returns the current exchange rate from USD to ZAR
+      description: Returns the current exchange rate from USD to ZAR as plain text
       operationId: get_usd_rate
       security:
         - bearerAuth: []
 
       responses:
         '200':
-          description: Successful response with exchange rate or error message
+          description: Successful response with the USD to ZAR exchange rate
           content:
             text/plain:
               schema:
@@ -70,6 +95,31 @@ paths:
               schema:
                 type: string
                 example: "The authorization header is missing a Bearer token key or doesn't match the required key."
+        '500':
+          description: Required environment variables are missing
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Missing EXCHANGE_RATE_API_KEY or SERVICE_AUTH_KEY environment variable."
+        '502':
+          description: Upstream exchange rate provider failed or returned an unexpected payload
+          content:
+            text/plain:
+              schema:
+                type: string
+                examples:
+                  upstreamRequestFailed:
+                    value: "Failed to reach the exchange rate API: 503 Server Error"
+                  unexpectedPayload:
+                    value: "Unexpected response from the exchange rate API: 'conversion_rates'"
+        '504':
+          description: Upstream exchange rate provider timed out
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "The exchange rate API request timed out. Please try again later."
 
 
 components:

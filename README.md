@@ -14,6 +14,8 @@ It is used to demonstrate a custom GPT Action calling an API for OpenAI GPT Acti
 - Security: protected endpoints with HTTP Bearer token.
 - Easy deployment: hosted verification path on PythonAnywhere.
 - Testing layers: separate notebook flows for provider-level checks and wrapper API checks.
+- Pre-commit hooks: Ruff, Yelp, yaml validation, debug statement checks
+- .env file for keys
 
 ## Architecture Overview
 
@@ -82,6 +84,9 @@ python -m pip install --upgrade pip
 
 pip install pre-commit
 pre-commit install
+
+pip install python-dotenv
+
 pip install flask requests
 
 $env:EXCHANGE_RATE_API_KEY = "your_exchange_rate_api_key" # pragma: allowlist secret
@@ -93,7 +98,7 @@ $env:FLASK_ENV = "development"
 flask --app plugin run
 ```
 
-Health check URL:
+Health check URL against flask:
 
 ```text
 http://127.0.0.1:5000/
@@ -123,11 +128,21 @@ setx SERVICE_AUTH_KEY "your_service_auth_key"
 
 If you use `setx`, restart VS Code before running notebook cells.
 
-### 3) API client test
+### 3) API client test with PythonAnywhere
 
-Login to your PythonAnywhere account and upload these 2 files for the "mysite" folder:
+1. Login to your PythonAnywhere account
+2. Follow these instructions for Flask on Python: https://help.pythonanywhere.com/pages/Flask
+
+3. Then upload these files for the "mysite" folder:
 - plugin.py and
 - openapi.yaml
+- .env
+
+In a PythonAnywhere Bash console, install the required packages:
+
+```console
+pip install flask requests python-dotenv
+```
 
 Use Postman to call:
 

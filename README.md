@@ -10,16 +10,16 @@ It is used to demonstrate a custom GPT Action calling an API for OpenAI GPT Acti
 ## What This Project Demonstrates
 
 - Design: wraps a third-party exchange-rate provider behind an internal API.
-- OpenAPI 3.1 specification for GPT Action compatibility.
-- Security: protected endpoints with HTTP Bearer token.
-- Easy deployment: hosted verification path on PythonAnywhere.
-- Testing layers: separate notebook flows for provider-level checks and wrapper API checks.
+- OpenAPI 3.1 specification for GPT Action compatibility. See [OpenAPI](#openapi-contract)
+- Security: protected endpoints with HTTP Bearer token. See [Auth Design](#authentication-design)
+- Easy deployment: hosted verification path on [PythonAnywhere](./testing/README.md).
+- Testing layers: [see here](./testing/README.md)
 - Pre-commit hooks: Ruff, Yelp, yaml validation, debug statement checks
 - .env file for keys
 
 ## Architecture Overview
 
-1. A Flask API receives client requests.
+1. A Flask web-based API receives client requests.
 2. The API validates the Bearer token for protected endpoints.
 3. The service calls ExchangeRate-API as an upstream provider.
 4. The service returns the ZAR exchange rate value as plain text.
@@ -91,108 +91,12 @@ pip install flask requests
 
 $env:EXCHANGE_RATE_API_KEY = "your_exchange_rate_api_key" # pragma: allowlist secret
 $env:SERVICE_AUTH_KEY = "your_service_auth_key" # pragma: allowlist secret
-
-$env:FLASK_APP = "plugin.py"
-$env:FLASK_ENV = "development"
-
-flask --app plugin run
-```
-
-Health check URL against flask:
-
-```text
-http://127.0.0.1:5000/
 ```
 
 ## Testing Strategy
 
-### 1) Provider integration test Jupyter notebook
+See [testing notes here](./testing/README.md)
 
-`TestCurrencyAPI.ipynb` calls ExchangeRate-API directly.
-
-Required environment variable:
-
-```console
-setx EXCHANGE_RATE_API_KEY "your_exchange_rate_api_key"
-```
-
-### 2) Hosted wrapper API test Jupyter notebook
-
-`TestCurrencyPlugin.ipynb` calls the hosted wrapper API on PythonAnywhere (not local Flask).
-
-Required environment variable:
-
-```console
-setx SERVICE_AUTH_KEY "your_service_auth_key"
-```
-
-If you use `setx`, restart VS Code before running notebook cells.
-
-### 3) API client test with PythonAnywhere
-
-1. Login to your PythonAnywhere account
-2. Follow these instructions for Flask on Python: https://help.pythonanywhere.com/pages/Flask
-
-3. Then upload these files for the "mysite" folder:
-- plugin.py and
-- openapi.yaml
-- .env
-
-In a PythonAnywhere Bash console, install the required packages:
-
-```console
-pip install flask requests python-dotenv
-```
-
-Use Postman to call:
-
-- `https://<your-pythonanywhere-domain>/`
-- `https://<your-pythonanywhere-domain>/GBPRate`
-- `https://<your-pythonanywhere-domain>/USDRate`
-
-Include `Authorization: Bearer <SERVICE_AUTH_KEY>` for protected endpoints.
-
-## GPT Action Setup
-
-Reference: https://help.openai.com/en/articles/8770868-gpt-builder
-
-Use `openapi.yaml` as the action schema and configure Bearer authentication with `SERVICE_AUTH_KEY`.
-
-### POC Prompt/Instructions for GPT Action
-You are a currency insights assistant focused on GBP/ZAR and USD/ZAR.
-
-Primary behavior:
-
-You are a GBP/ZAR and USD/ZAR currency insights assistant.
-
-For current rates, always call the Actions API first.
-Show the current rate(s) with retrieval date/time.
-1) Explain movement in clear, non-technical language.
-2) Use credible web sources for past month/year context and 1-week outlook.
-3) Clearly label what comes from:
-- Actions API
-- Web research
-- Your interpretation
-
-If API fails:
-
-1) Say the API is unavailable.
-2) Provide best-effort web-based context.
-3) Note reduced confidence.
-
-Style:
-
-Keep responses concise and executive-friendly.
-Do not give financial advice.
-Ask one clarifying question only if user intent is unclear.
-
-Default response structure:
-
-1) Current snapshot
-2) Trend context (1 month, 1 year)
-3) 1-week outlook
-4) Key risks/watchouts
-5) Source note (API timestamp + web sources used)
 
 ## Ideas for improvements to POC
 

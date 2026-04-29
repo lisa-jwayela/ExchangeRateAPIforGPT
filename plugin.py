@@ -1,11 +1,14 @@
 # Import the needed libraries
 import json
 import os
+from pathlib import Path
+
 import requests
 from dotenv import load_dotenv
 from flask import Flask, request
 
-load_dotenv()
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(dotenv_path=BASE_DIR / ".env", override=False)
 
 # Initialize the Flask app
 app = Flask(__name__)
@@ -13,19 +16,30 @@ app = Flask(__name__)
 # API used to get exchange rates for GBP to ZAR
 # Documentation: https://www.exchangerate-api.com/docs/python-currency-api
 EXCHANGE_RATE_URL = "https://v6.exchangerate-api.com/v6/"
-API_KEY = os.getenv("EXCHANGE_RATE_API_KEY")
-SERVICE_AUTH_KEY = os.getenv("SERVICE_AUTH_KEY")
-ERROR_STRING = "The authorization header is missing a Bearer token key or doesn't match the required key."
-MISSING_KEY_STRING = "Missing EXCHANGE_RATE_API_KEY environment variable."
-MISSING_SERVICE_KEY_STRING = "Missing SERVICE_AUTH_KEY environment variable."
+ERROR_STRING = "The authorization header is missing a Bearer token key or doesn't match the required key."  # pragma: allowlist secret
+MISSING_KEY_STRING = (
+    "Missing EXCHANGE_RATE_API_KEY environment variable."  # pragma: allowlist secret
+)
+MISSING_SERVICE_KEY_STRING = (
+    "Missing SERVICE_AUTH_KEY environment variable."  # pragma: allowlist secret
+)
+
+
+def get_api_key():
+    return os.getenv("EXCHANGE_RATE_API_KEY")
+
+
+def get_service_auth_key():
+    return os.getenv("SERVICE_AUTH_KEY")
 
 
 # Requires token be present
 def assert_auth_header():
-    if not SERVICE_AUTH_KEY:
+    service_auth_key = get_service_auth_key()
+    if not service_auth_key:
         raise ValueError(MISSING_SERVICE_KEY_STRING)
     auth_header = request.headers.get("Authorization", None)
-    if auth_header != f"Bearer {SERVICE_AUTH_KEY}":
+    if auth_header != f"Bearer {service_auth_key}":
         raise AssertionError(ERROR_STRING)
 
 
@@ -42,10 +56,11 @@ def index():
 @app.route("/GBPRate", methods=["GET"])
 def get_gbp_rate():
     try:
-        if not API_KEY:
+        api_key = get_api_key()
+        if not api_key:
             return MISSING_KEY_STRING, 500
         assert_auth_header()
-        response = requests.get(EXCHANGE_RATE_URL + API_KEY + "/latest/GBP", timeout=10)
+        response = requests.get(f"{EXCHANGE_RATE_URL}{api_key}/latest/GBP", timeout=10)
         api_data = response.json()
         exchange_rate_for_GBP_to_rand = api_data["conversion_rates"]["ZAR"]
         return str(exchange_rate_for_GBP_to_rand)
@@ -68,10 +83,11 @@ def get_gbp_rate():
 @app.route("/USDRate", methods=["GET"])
 def get_usd_rate():
     try:
-        if not API_KEY:
+        api_key = get_api_key()
+        if not api_key:
             return MISSING_KEY_STRING, 500
         assert_auth_header()
-        response = requests.get(EXCHANGE_RATE_URL + API_KEY + "/latest/USD", timeout=10)
+        response = requests.get(f"{EXCHANGE_RATE_URL}{api_key}/latest/USD", timeout=10)
         api_data = response.json()
         exchange_rate_for_USD_to_rand = api_data["conversion_rates"]["ZAR"]
         return str(exchange_rate_for_USD_to_rand)

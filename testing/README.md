@@ -4,7 +4,7 @@ Multiple ways to test:
 1. Directly to the 3rd party [Exchange Rate API using Jupyter Notebook](#1-provider-integration-test-jupyter-notebook)
 2. Against locally running [Flask web app API](#2-local-web-app-api-test-with-postman) using Postman
 3. Against cloud hosted [web app API running on PythonAnywhere](#3-api-client-test-with-pythonanywhere)
-4. Testing a GPT Action using the openAPI schema. See [GPT Action setup notes](#gpt-action-setup)
+4. Testing a GPT Action using the OpenAPI schema. See [GPT Action setup notes](#gpt-action-setup)
 
 ## 1) Provider integration test Jupyter notebook
 
@@ -71,8 +71,8 @@ Use Postman to call:
 
 Include `Authorization: Bearer <SERVICE_AUTH_KEY>` for these protected endpoints.
 
-### 3.1 Test with Juypter Notebook
-`test-exchange-rate-plugin.ipnb`
+### 3.2 Test with Juypter Notebook
+`test-exchange-rate-plugin.ipynb`
 
 NOTE: the SERVICE_AUTH_KEY is needed
 

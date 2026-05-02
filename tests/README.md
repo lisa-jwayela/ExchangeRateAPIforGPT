@@ -1,12 +1,32 @@
 # Testing the Exchange Rate API for GPT Actions
 
 Multiple ways to test:
-1. Directly to the 3rd party [Exchange Rate API using Jupyter Notebook](#1-provider-integration-test-jupyter-notebook)
-2. Against locally running [Flask web app API](#2-local-web-app-api-test-with-postman) using Postman
-3. Against cloud hosted [web app API running on PythonAnywhere](#3-api-client-test-with-pythonanywhere)
-4. Testing a GPT Action using the OpenAPI schema. See [GPT Action setup notes](#gpt-action-setup)
+1. Unit tests with pytest
+2. Directly to the 3rd party [Exchange Rate API using Jupyter Notebook](#1-provider-integration-test-jupyter-notebook)
+3. Against locally running [Flask web app API](#2-local-web-app-api-test-with-postman) using Postman
+4. Against cloud hosted [web app API running on PythonAnywhere](#3-api-client-test-with-pythonanywhere)
+5. Testing a GPT Action using the OpenAPI schema. See [GPT Action setup notes](#gpt-action-setup)
 
-## 1) Provider integration test Jupyter notebook
+
+
+## 1) Automated unit tests with pytest
+
+Run the automated test suite from the repository root:
+
+```console
+python -m pytest -q
+```
+
+What is covered:
+
+- Health check endpoint (`GET /`)
+- Authenticated GBP and USD endpoint success paths (`GET /GBPRate`, `GET /USDRate`)
+- Auth failure behavior for protected endpoints
+- Missing `EXCHANGE_RATE_API_KEY` behavior
+
+The pytest suite uses Flask's test client and mocks upstream provider calls, so tests run quickly and do not require live API calls.
+
+## 2) Provider integration test Jupyter notebook
 
 `test-exchange-rate-api.ipynb` calls ExchangeRate-API directly.
 
@@ -18,7 +38,7 @@ setx EXCHANGE_RATE_API_KEY "your_exchange_rate_api_key"
 
 If you use `setx`, restart VS Code before running notebook cells.
 
-## 2) Flask local web app API test with Postman
+## 3) Flask local web app API test with Postman
 
 ```console
 
@@ -45,7 +65,7 @@ URLs for testing with Postman
 
 Include `Authorization: Bearer <SERVICE_AUTH_KEY>` for protected endpoints.
 
-## 3) API client test with PythonAnywhere
+## 4) API client test with PythonAnywhere
 
 1. Login to your PythonAnywhere account
 2. Follow these instructions for Flask on Python: https://help.pythonanywhere.com/pages/Flask
@@ -61,7 +81,7 @@ In a PythonAnywhere Bash console, install the required packages:
 pip install flask requests python-dotenv
 ```
 
-### 3.1 Test with Postman
+### 4.1 Test with Postman
 
 Use Postman to call:
 
@@ -71,14 +91,14 @@ Use Postman to call:
 
 Include `Authorization: Bearer <SERVICE_AUTH_KEY>` for these protected endpoints.
 
-### 3.2 Test with Juypter Notebook
+### 4.2 Test with Jupyter Notebook
 `test-exchange-rate-plugin.ipynb`
 
 NOTE: the SERVICE_AUTH_KEY is needed
 
 --------------------------------------------------------------------------------------------
 
-## GPT Action Setup
+## 5) GPT Action Setup
 
 Reference: https://help.openai.com/en/articles/8770868-gpt-builder
 

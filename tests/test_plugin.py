@@ -1,5 +1,6 @@
 # unittest.mock.Mock lets us replace real function calls with fake ones
 # so tests don't make network requests or need real API keys.
+import json
 from unittest.mock import Mock
 
 # pytest is the test framework. It discovers functions named test_* and runs them automatically.
@@ -144,3 +145,154 @@ def test_protected_endpoint_requires_exchange_rate_api_key(client, monkeypatch):
     # and include the missing-key message so the problem is easy to diagnose.
     assert response.status_code == 500
     assert response.get_data(as_text=True) == plugin.MISSING_KEY_STRING
+
+
+def test_protected_endpoint_returns_500_when_service_auth_key_is_missing(
+    client, monkeypatch
+):
+    # Arrange: SERVICE_AUTH_KEY is absent — the plugin cannot validate the Bearer token
+    # at all, so it raises ValueError before even checking the request header.
+    monkeypatch.setenv("EXCHANGE_RATE_API_KEY", "demo-api-key")
+    monkeypatch.delenv("SERVICE_AUTH_KEY", raising=False)
+
+    # Act: supply a header that would otherwise be valid; the key check happens first.
+    response = client.get(
+        "/GBPRate", headers={"Authorization": "Bearer demo-service-key"}
+    )
+
+    # Assert: 500 with the specific missing-service-key message (not the API key message).
+    assert response.status_code == 500
+    assert response.get_data(as_text=True) == plugin.MISSING_SERVICE_KEY_STRING
+
+
+def test_gbp_rate_returns_504_when_upstream_times_out(client, monkeypatch):
+    # Arrange: make requests.get raise Timeout to simulate the provider being slow.
+    monkeypatch.setenv("EXCHANGE_RATE_API_KEY", "demo-api-key")
+    monkeypatch.setenv("SERVICE_AUTH_KEY", "demo-service-key")
+
+    monkeypatch.setattr(
+        plugin.requests, "get", Mock(side_effect=plugin.requests.Timeout)
+    )
+
+    # Act
+    response = client.get(
+        "/GBPRate", headers={"Authorization": "Bearer demo-service-key"}
+    )
+
+    # Assert: 504 Gateway Timeout with an informative plain-text message.
+    assert response.status_code == 504
+    assert "timed out" in response.get_data(as_text=True)
+
+
+def test_usd_rate_returns_504_when_upstream_times_out(client, monkeypatch):
+    # Arrange: same timeout scenario for the USD endpoint.
+    monkeypatch.setenv("EXCHANGE_RATE_API_KEY", "demo-api-key")
+    monkeypatch.setenv("SERVICE_AUTH_KEY", "demo-service-key")
+
+    monkeypatch.setattr(
+        plugin.requests, "get", Mock(side_effect=plugin.requests.Timeout)
+    )
+
+    # Act
+    response = client.get(
+        "/USDRate", headers={"Authorization": "Bearer demo-service-key"}
+    )
+
+    # Assert
+    assert response.status_code == 504
+    assert "timed out" in response.get_data(as_text=True)
+
+
+def test_gbp_rate_returns_502_when_upstream_request_fails(client, monkeypatch):
+    # Arrange: make requests.get raise a generic RequestException (e.g. DNS failure,
+    # connection refused) to simulate the provider being unreachable.
+    monkeypatch.setenv("EXCHANGE_RATE_API_KEY", "demo-api-key")
+    monkeypatch.setenv("SERVICE_AUTH_KEY", "demo-service-key")
+
+    monkeypatch.setattr(
+        plugin.requests,
+        "get",
+        Mock(side_effect=plugin.requests.RequestException("503 Server Error")),
+    )
+
+    # Act
+    response = client.get(
+        "/GBPRate", headers={"Authorization": "Bearer demo-service-key"}
+    )
+
+    # Assert: 502 Bad Gateway with a message that includes the underlying error detail.
+    assert response.status_code == 502
+    assert "Failed to reach the exchange rate API" in response.get_data(as_text=True)
+
+
+def test_usd_rate_returns_502_when_upstream_request_fails(client, monkeypatch):
+    # Arrange: same upstream-failure scenario for the USD endpoint.
+    monkeypatch.setenv("EXCHANGE_RATE_API_KEY", "demo-api-key")
+    monkeypatch.setenv("SERVICE_AUTH_KEY", "demo-service-key")
+
+    monkeypatch.setattr(
+        plugin.requests,
+        "get",
+        Mock(side_effect=plugin.requests.RequestException("503 Server Error")),
+    )
+
+    # Act
+    response = client.get(
+        "/USDRate", headers={"Authorization": "Bearer demo-service-key"}
+    )
+
+    # Assert
+    assert response.status_code == 502
+    assert "Failed to reach the exchange rate API" in response.get_data(as_text=True)
+
+
+def test_gbp_rate_returns_502_when_upstream_payload_is_missing_expected_key(
+    client, monkeypatch
+):
+    # Arrange: the provider returns valid JSON but the expected 'conversion_rates' key
+    # is absent — simulates an unexpected schema change in the upstream API.
+    monkeypatch.setenv("EXCHANGE_RATE_API_KEY", "demo-api-key")
+    monkeypatch.setenv("SERVICE_AUTH_KEY", "demo-service-key")
+
+    monkeypatch.setattr(
+        plugin.requests,
+        "get",
+        Mock(
+            return_value=FakeResponse({"result": "success"})
+        ),  # missing conversion_rates
+    )
+
+    # Act
+    response = client.get(
+        "/GBPRate", headers={"Authorization": "Bearer demo-service-key"}
+    )
+
+    # Assert: 502 with a message that names the unexpected-response problem.
+    assert response.status_code == 502
+    assert "Unexpected response from the exchange rate API" in response.get_data(
+        as_text=True
+    )
+
+
+def test_usd_rate_returns_502_when_upstream_response_is_not_valid_json(
+    client, monkeypatch
+):
+    # Arrange: the provider returns a response whose .json() raises JSONDecodeError,
+    # simulating an HTML error page or malformed body being returned instead of JSON.
+    monkeypatch.setenv("EXCHANGE_RATE_API_KEY", "demo-api-key")
+    monkeypatch.setenv("SERVICE_AUTH_KEY", "demo-service-key")
+
+    bad_response = Mock()
+    bad_response.json.side_effect = json.JSONDecodeError("Expecting value", "", 0)
+    monkeypatch.setattr(plugin.requests, "get", Mock(return_value=bad_response))
+
+    # Act
+    response = client.get(
+        "/USDRate", headers={"Authorization": "Bearer demo-service-key"}
+    )
+
+    # Assert
+    assert response.status_code == 502
+    assert "Unexpected response from the exchange rate API" in response.get_data(
+        as_text=True
+    )

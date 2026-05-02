@@ -66,14 +66,14 @@ def get_gbp_rate():
         return str(exchange_rate_for_GBP_to_rand)
     except AssertionError:
         return ERROR_STRING, 401
+    except (KeyError, json.JSONDecodeError) as e:
+        return f"Unexpected response from the exchange rate API: {e}", 502
     except ValueError as e:
         return str(e), 500
     except requests.Timeout:
         return "The exchange rate API request timed out. Please try again later.", 504
     except requests.RequestException as e:
         return f"Failed to reach the exchange rate API: {e}", 502
-    except (KeyError, json.JSONDecodeError) as e:
-        return f"Unexpected response from the exchange rate API: {e}", 502
 
 
 # This route contains the core functionality to get todays exchange rate for USD to ZAR and return it as a number
@@ -93,11 +93,11 @@ def get_usd_rate():
         return str(exchange_rate_for_USD_to_rand)
     except AssertionError:
         return ERROR_STRING, 401
+    except (KeyError, json.JSONDecodeError) as e:
+        return f"Unexpected response from the exchange rate API: {e}", 502
     except ValueError as e:
         return str(e), 500
     except requests.Timeout:
         return "The exchange rate API request timed out. Please try again later.", 504
     except requests.RequestException as e:
         return f"Failed to reach the exchange rate API: {e}", 502
-    except (KeyError, json.JSONDecodeError) as e:
-        return f"Unexpected response from the exchange rate API: {e}", 502

@@ -114,17 +114,25 @@ def test_usd_rate_returns_zar_value_when_authenticated(client, monkeypatch):
     )
 
 
+@pytest.mark.parametrize(
+    "headers",
+    [
+        {},
+        {"Authorization": "Bearer invalid-service-key"},
+    ],
+)
 def test_protected_endpoint_rejects_missing_or_invalid_bearer_token(
-    client, monkeypatch
+    client, monkeypatch, headers
 ):
-    # Arrange: both keys exist, but we deliberately omit the Authorization header below.
+    # Arrange: both keys exist, and we exercise both a missing header
+    # and an incorrect Bearer token via the parametrized `headers` input.
     monkeypatch.setenv("EXCHANGE_RATE_API_KEY", "demo-api-key")
     monkeypatch.setenv("SERVICE_AUTH_KEY", "demo-service-key")
 
-    # Act: call a protected endpoint without supplying an Authorization header.
-    response = client.get("/GBPRate")
+    # Act: call a protected endpoint without auth or with an invalid token.
+    response = client.get("/GBPRate", headers=headers)
 
-    # Assert: the plugin must reject the request with 401 Unauthorized
+    # Assert: the plugin must reject both requests with 401 Unauthorized
     # and return the exact error message defined in plugin.py.
     assert response.status_code == 401
     assert response.get_data(as_text=True) == plugin.ERROR_STRING
